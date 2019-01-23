@@ -1,0 +1,719 @@
+Libname mydata '/sscc/home/j/jgv713/PREDICT411MoneyballData/'; *SAS studio document said libname statement ended with /data/ but I changed the to sasuser.v94. this seemed to work;
+proc contents data=mydata.moneyball; run; quit;
+proc print   data=mydata.moneyball(obs=10);run;quit;
+
+*Data exploration;
+proc means data=mydata.moneyball min max mean median nmiss n stddev  p1 p5 p95 p99;
+var Target_Wins Team_Batting_H Team_Batting_2B Team_Batting_3B Team_Batting_HR Team_Batting_BB Team_Batting_HBP Team_Batting_SO Team_Baserun_SB Team_Baserun_CS Team_Fielding_E Team_Fielding_DP Team_Pitching_BB TEAM_PITCHING_H TEAM_PITCHING_HR TEAM_PITCHING_SO;
+Title 'Numerical Data PROC Means';
+run; quit;
+proc univariate data=mydata.moneyball noprint;
+histogram Team_Batting_H Team_Batting_2B Team_Batting_3B Team_Batting_HR Team_Batting_BB Team_Batting_HBP Team_Batting_SO Team_Baserun_SB Team_Baserun_CS Team_Fielding_E Team_Fielding_DP Team_Pitching_BB TEAM_PITCHING_H TEAM_PITCHING_HR TEAM_PITCHING_SO;
+run; quit;
+proc corr data=mydata.moneyball;
+var Team_Batting_H Team_Batting_2B Team_Batting_3B Team_Batting_HR Team_Batting_BB Team_Batting_HBP Team_Batting_SO Team_Baserun_SB Team_Baserun_CS Team_Fielding_E Team_Fielding_DP Team_Pitching_BB TEAM_PITCHING_H TEAM_PITCHING_HR TEAM_PITCHING_SO;
+with Target_Wins;
+Title 'Correlation of Variabels with Target_Wins';
+run; quit;
+
+*segment wins;
+data one;
+   set mydata.moneyball;
+  if (target_wins < 31) then wins=1;
+  else if (target_wins < 61) then wins=2;
+  else if (target_wins < 91) then wins=3;
+  else if (target_wins < 121) then wins=4;
+  else  wins=5;
+  run;
+
+*box plots;
+proc sgplot data=one;
+  vbox team_batting_h/group=wins grouporder=ascending;
+  xaxis label= "wins";
+  title "Team Batting Hits";
+  keylegend / title="Wins Category";
+  run;quit;
+proc sgplot data=one;
+  vbox team_batting_2B/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  title "Team Batting 2B";
+  keylegend / title="Wins Category";
+  run;quit;
+proc sgplot data=one;
+  vbox team_batting_3B/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  title "Team Batting 3B";
+  keylegend / title="Wins Category";
+  run;quit;
+proc sgplot data=one;
+  vbox team_batting_HR/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  title "Team Batting HR";
+  keylegend / title="Wins Category";
+  run;quit;
+proc sgplot data=one;
+  vbox team_batting_BB/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  title "Team Batting BB";
+  keylegend / title="Wins Category";
+  run;quit;
+proc sgplot data=one;
+  vbox team_batting_HBP/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  title "Team Batting HBP";
+  keylegend / title="Wins Category";
+  run;quit;
+proc sgplot data=one;
+  vbox team_batting_SO/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  title "Team Batting SO";
+  keylegend / title="Wins Category";
+  run;quit;
+proc sgplot data=one;
+  vbox team_baserun_sb/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  title "Team Baserunning SB";
+  keylegend / title="Wins Category";
+  run;quit;
+proc sgplot data=one;
+  vbox team_baserun_cs/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  title "Team Baseruning Caught Stealing";
+  keylegend / title="Wins Cateogry";
+  run;quit;
+proc sgplot data=one;
+  vbox team_fielding_e/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  title "Team Fielding Errors";
+  keylegend / title="Wins Category";
+  run;quit;
+proc sgplot data=one;
+  vbox team_fielding_dp/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  title "Team Fielding Double Plays";
+  keylegend / title="Wins Category";
+  run;quit;
+proc sgplot data=one;
+  vbox team_pitching_bb/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  title "Team Pitching BBs";
+  keylegend / title="Wins Category";
+  run;quit;
+proc sgplot data=one;
+  vbox team_pitching_h/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  title "Team Pitching Hits Allowed";
+  keylegend / title="Wins Category";
+  run;quit;
+proc sgplot data=one;
+  vbox team_pitching_hr/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  title "Team Pitching Hr";
+  keylegend / title="Wins Category";
+  run;quit;
+proc sgplot data=one;
+  vbox team_pitching_so/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  title "Team Pitching Strike Outs";
+  keylegend / title="Wins Category";
+  run;quit;
+
+*Scatter plot EDA;
+PROC SGPLOT data=mydata.moneyball;
+SCATTER X=TEAM_BATTING_H Y=TARGET_WINS;
+title "Team Batting Hits";
+run;quit;
+PROC SGPLOT data=mydata.moneyball;
+SCATTER X=TEAM_BATTING_2B Y=TARGET_WINS;
+title "Team Batting 2B";
+run;quit;
+PROC SGPLOT data=mydata.moneyball;
+SCATTER X=TEAM_BATTING_3B Y=TARGET_WINS;
+title "Team Batting 3B";
+run;quit;
+PROC SGPLOT data=mydata.moneyball;
+SCATTER X=TEAM_BATTING_HR Y=TARGET_WINS;
+title "Team Batting HR";
+run;quit;
+PROC SGPLOT data=mydata.moneyball;
+SCATTER X=TEAM_BATTING_BB Y=TARGET_WINS;
+title "Team Batting BB";
+run;quit;
+PROC SGPLOT data=mydata.moneyball;
+SCATTER X=TEAM_BATTING_HBP Y=TARGET_WINS;
+title "Team Batting HBP";
+run;quit;
+PROC SGPLOT data=mydata.moneyball;
+SCATTER X=TEAM_BATTING_SO Y=TARGET_WINS;
+title "Team Batting SO";
+run;quit;
+PROC SGPLOT data=mydata.moneyball;
+SCATTER X=TEAM_BASERUN_SB Y=TARGET_WINS;
+Title "Team Baserunning SB";
+run;quit;
+PROC SGPLOT data=mydata.moneyball;
+SCATTER X=TEAM_BASERUN_CS Y=TARGET_WINS;
+Title "Team Baserunning CS";
+run;quit;
+PROC SGPLOT data=mydata.moneyball;
+SCATTER X=TEAM_FIELDING_DP Y=TARGET_WINS;
+Title "Team Fielding DP";
+run;quit;
+PROC SGPLOT data=mydata.moneyball;
+SCATTER X=TEAM_FIELDING_E Y=TARGET_WINS;
+Title "Team Fielding Errors";
+run;quit;
+PROC SGPLOT data=mydata.moneyball;
+SCATTER X=TEAM_PITCHING_BB Y=TARGET_WINS;
+Title "Team Pitching BB";
+run;quit;
+PROC SGPLOT data=mydata.moneyball;
+SCATTER X=TEAM_PITCHING_H Y=TARGET_WINS;
+Title "Team Pitching Hits Allowed";
+run;quit;
+PROC SGPLOT data=mydata.moneyball;
+SCATTER X=TEAM_PITCHING_HR Y=TARGET_WINS;
+Title "Team Pitching HR";
+run;quit;
+
+PROC SGPLOT data=mydata.moneyball;
+SCATTER X=TEAM_BATTING_HR Y=TARGET_WINS;
+Title "Team Homeruns by Batters";
+run;quit;
+
+*DATA PREPERATION.
+Data step imputing missing values with aveages and creating flag variables for missing values;
+Data moneyball3;
+   set one;
+   drop Team_batting_hbp;
+
+   IMP_baserun_cs=team_baserun_cs;
+   M_CS=0;
+   if missing (Team_baserun_cs) then do;
+   IMP_Baserun_CS=52.8;
+   M_CS=1;
+   end;
+   drop team_baserun_cs;
+
+   Imp_batting_so=team_batting_so;
+   M_SO=0;
+   if missing (team_batting_so) then do;
+   Imp_batting_so=735.6;
+   M_SO=1;
+   end;
+   drop team_batting_so;
+
+   Imp_baserun_sb=team_baserun_sb;
+   M_sb=0;
+   if missing (team_baserun_sb) then do;
+   Imp_baserun_sb=124.7;
+   M_sb=1;
+   end;
+   drop team_baserun_sb;
+
+   Imp_fielding_DP=team_fielding_dp;
+   M_DP=0;
+   if missing (team_fielding_dp) then do;
+   Imp_fielding_dp=146.4;
+   M_DP=1;
+   end;
+   drop team_fielding_dp;
+
+   Imp_pitching_so=team_pitching_so;
+   M_PSO=0;
+   if missing (team_pitching_so) then do;
+   Imp_pitching_so=817.7;
+   M_PSO=1;
+   end;
+   drop team_pitching_so;
+   run; quit;
+
+*Data step tansforming variables-Creating new variables;
+
+data two;
+   set moneyball3;
+   TEAM_BATTING_1B = TEAM_BATTING_H - TEAM_BATTING_HR - TEAM_BATTING_2B - TEAM_BATTING_3B;
+   Total_Bases_Earned= 4*Team_Batting_HR+3*Team_Batting_3B+2*Team_Batting_2B+TEAM_Batting_1B+Team_Batting_BB+Imp_baserun_sb-IMP_baserun_cs;
+	HitplusWalkRatio=(Team_Batting_H+Team_Batting_BB)/(Team_pitching_H+Team_pitching_BB);
+	Base_Runners_Allowed=Team_Pitching_BB+Team_Pitching_H;
+	DoublePlays_Over_Errors=Imp_fielding_DP/Team_fielding_E;
+run;
+proc means data=two min max mean median nmiss n stddev  p1 p5 p95 p99;
+var DoublePlays_Over_Errors Base_Runners_Allowed HitplusWalkRatio Total_Bases_Earned TEAM_BATTING_1B Target_Wins Team_Batting_H Team_Batting_2B Team_Batting_3B Team_Batting_HR Team_Batting_BB Team_Fielding_E Team_Pitching_BB TEAM_PITCHING_H TEAM_PITCHING_HR;
+Title 'Numerical Data PROC Means';
+run; quit;
+
+
+*EDA for created variables;
+proc univariate data=two noprint;
+	histogram TEAM_BATTING_1B Total_Bases_Earned HitplusWalkRatio Base_Runners_Allowed DoublePlays_Over_Errors;
+	run; quit;
+proc sgplot data=two;
+	scatter x=TEAM_BATTING_1B Y=TARGET_WINS;
+	run; quit;
+proc sgplot data=two;
+	scatter x=Total_Bases_Earned Y=TARGET_WINS;
+	run; quit;
+proc sgplot data=two;
+	scatter x=HitplusWalkRatio Y=TARGET_WINS;
+	run; quit;
+proc sgplot data=two;
+	scatter x=Base_Runners_Allowed Y=TARGET_WINS;
+	run; quit;
+proc sgplot data=two;
+	scatter x=DoublePlays_Over_Errors Y=TARGET_WINS;
+	run; quit;
+
+*More EDA;
+proc sgplot data=two;
+  vbox team_batting_1b/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  keylegend / title="Wins Category";
+  run;
+ proc sgplot data=two;
+  vbox total_bases_earned/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  keylegend / title="Wins Category";
+  run;
+  proc sgplot data=two;
+  vbox HitplusWalkRatio/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  keylegend / title="Wins Category";
+  run;
+  proc sgplot data=two;
+  vbox Base_Runners_Allowed/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  keylegend / title="Wins Category";
+  run;
+  proc sgplot data=two;
+  vbox DoublePlays_Over_Errors/group=wins grouporder=ascending;
+  xaxis label="Wins";
+  keylegend / title="Wins Category";
+  run;
+quit;
+
+proc sgplot data=two;
+Scatter x= DoublePlays_Over_Errors y=target_wins;
+run;
+
+*Transforming data
+Macro for Trimming data;
+proc means data=two noprint;
+output out =MEANFILE
+	p1(Base_Runners_Allowed HitPlusWalkRatio Total_Bases_earned Team_Batting_1B Team_fielding_E Imp_pitching_so Team_Pitching_BB Team_pitching_H Team_Batting_H Team_Batting_2B Team_Batting_3B Team_Batting_BB Imp_baserun_sb IMP_baserun_cs )=p01_BRA p01HPW p01tbe p011B p01tfe p01ips p01pbb p01ph p01h p012B p013B p01BB p01SB p01CS
+	p5(Base_Runners_Allowed HitPlusWalkRatio Total_Bases_earned Team_Batting_1B Team_fielding_E Imp_pitching_so Team_Pitching_BB Team_pitching_H Team_Batting_H Team_Batting_2B Team_Batting_3B Team_Batting_BB Imp_baserun_sb IMP_baserun_cs)=p05_BRA p05HPW p05tbe p051B p05tfe p05ips p05pbb p05ph p05h p052B p053B p05BB p05SB p05CS
+	p95(Base_Runners_Allowed HitPlusWalkRatio Total_Bases_earned Team_Batting_1B Team_fielding_E Imp_pitching_so Team_Pitching_BB Team_pitching_H Team_Batting_H Team_Batting_2B Team_Batting_3B Team_Batting_BB Imp_baserun_sb IMP_baserun_cs)=p95_BRA p95HPW p95tbe p951B p95tfe p95ips p95pbb p95ph p95h p952B p953B p95BB p95SB p95CS
+	p99(Base_Runners_Allowed HitPlusWalkRatio Total_Bases_earned Team_Batting_1B Team_fielding_E Imp_pitching_so Team_Pitching_BB Team_pitching_H Team_Batting_H Team_Batting_2B Team_Batting_3B Team_Batting_BB Imp_baserun_sb IMP_baserun_cs)=p99_BRA p99HPW p99tbe p991B p99tfe p99ips p99pbb p99ph p99h p992B p993B p99BB p99SB p99CS;
+proc print data=MEANFILE;
+run;
+data;
+set MEANFILE;
+call symput("P01h",P01h);
+call symput("P05h",P05h);
+call symput("p95h",P95h);
+call symput("p99h",P99h);
+call symput("P012B",P012B);
+call symput("P052B",P052B);
+call symput("p952B",P952B);
+call symput("p992B",P992B);
+call symput("P013B",P013B);
+call symput("P053B",P053B);
+call symput("p953B",P953B);
+call symput("p993B",P993B);
+call symput("P01BB",P01BB);
+call symput("P05BB",P05BB);
+call symput("p95BB",P95BB);
+call symput("p99BB",P99BB);
+call symput("P01SB",P01SB);
+call symput("P05SB",P05SB);
+call symput("p95SB",P95SB);
+call symput("p99SB",P99SB);
+call symput("P01CS",P01CS);
+call symput("P05CS",P05CS);
+call symput("p95CS",P95CS);
+call symput("p99CS",P99CS);
+call symput("P01ph",P01ph);
+call symput("P05ph",P05ph);
+call symput("p95ph",P95ph);
+call symput("p99ph",P99ph);
+call symput("P01pbb",P01pbb);
+call symput("P05pbb",P05pbb);
+call symput("p95pbb",P95pbb);
+call symput("p99pbb",P99pbb);
+call symput("P01ips",P01ips);
+call symput("P05ips",P05ips);
+call symput("p95ips",P95ips);
+call symput("p99ips",P99ips);
+call symput("P01tfe",P01tfe);
+call symput("P05tfe",P05tfe);
+call symput("p95tfe",P95tfe);
+call symput("p99tfe",P99tfe);
+call symput("P011B",P011B);
+call symput("P051B",P051B);
+call symput("p951B",P951B);
+call symput("p991B",P991B);
+call symput("P01tbe",P01tbe);
+call symput("P05tbe",P05tbe);
+call symput("p95tbe",P95tbe);
+call symput("p99tbe",P99tbe);
+call symput("P01hpw",P01hpw);
+call symput("P05hpw",P05hpw);
+call symput("p95hpw",P95hpw);
+call symput("p99hpw",P99hpw);
+call symput("P01BRA",P01BRA);
+call symput("P05BRA",P05BRA);
+call symput("p95BRA",P95BRA);
+call symput("p99BRA",P99BRA);
+run;
+
+data xform;
+set two;
+T95_Batting_H	=max(min(Team_Batting_H,&P95h.),&p05h.);
+T99_Batting_H	=max(min(Team_Batting_H,&P99h.),&p01h.);
+T95_Batting_2B	=max(min(Team_Batting_2B,&P952B.),&p052B.);
+T99_Batting_2B	=max(min(Team_Batting_2B,&P992B.),&p012B.);
+T95_Batting_3B	=max(min(Team_Batting_3B,&P953B.),&p053B.);
+T99_Batting_3B	=max(min(Team_Batting_3B,&P993B.),&p013B.);
+T95_Batting_BB	=max(min(Team_Batting_BB,&P95BB.),&p05BB.);
+T99_Batting_BB	=max(min(Team_Batting_BB,&P99BB.),&p01BB.);
+T95_Baserun_ISB	=max(min(Imp_Baserun_SB,&P95SB.),&p05SB.);
+T99_Baserun_ISB	=max(min(Imp_Baserun_SB,&P99SB.),&p01SB.);
+T95_Baserun_ICS	=max(min(Imp_Baserun_CS,&P95CS.),&p05CS.);
+T99_Baserun_ICS	=max(min(Imp_Baserun_CS,&P99CS.),&p01CS.);
+T95_Pitching_ph	=max(min(Team_pitching_H,&P95ph.),&p05ph.);
+T99_Pitching_ph=max(min(Team_pitching_H,&P99PH.),&p01ph.);
+T95_Pitching_pbb =max(min(Team_pitching_bb,&P95pbb.),&p05pbb.);
+T99_Pitching_pbb=max(min(Team_pitching_bb,&P99Pbb.),&p01pbb.);
+T95_Pitching_ips =max(min(IMP_pitching_so,&P95ips.),&p05ips.);
+T99_Pitching_ips =max(min(IMP_pitching_so,&P99ips.),&p01ips.);
+T95_Fielding_tfe =max(min(Team_fielding_e,&P95tfe.),&p05tfe.);
+T99_Fielding_tfe =max(min(Team_fielding_e,&P99tfe.),&p01tfe.);
+T95_Batting_1B =max(min(Team_Batting_1B,&P951B.),&p051B.);
+T99_Batting_1B =max(min(Team_Batting_1B,&P991B.),&p011B.);
+T95_TBE =max(min(Total_Bases_Earned,&P95tbe.),&p05tbe.);
+T99_TBE =max(min(Total_Bases_Earned,&P99tbe.),&p01tbe.);
+T95_HPW =max(min(HitPlusWalkRatio,&P95HPW.),&p05HPW.);
+T99_HPW =max(min(HitPlusWalkRatio,&P99HPW.),&p01HPW.);
+T95_BRA =max(min(Base_Runners_Allowed,&P95BRA.),&p05BRA.);
+T99_BRA =max(min(Base_Runners_Allowed,&P99BRA.),&p01BRA.);
+run;
+
+proc univariate data=xform noprint;
+histogram T95_BRA T99_BRA T95_HPW T99_HPW T95_TBE T99_TBE T95_Batting_1B T99_Batting_1B T95_fielding_tfe T99_Fielding_tfe T95_pitching_ips T99_pitching_ips T95_Pitching_Pbb T99_pitching_PBB T95_Pitching_ph T99_pitching_ph T95_Batting_H T99_Batting_H T95_Batting_2B T99_Batting_2B T95_Batting_3B T99_Batting_3B T95_Batting_BB T99_Batting_BB T95_Baserun_ISB T99_Baserun_ISB T95_Baserun_ICS T99_Baserun_ICS;
+run; quit;
+
+data xform;
+	set xform;
+	ln_homerunbat=sign(Team_Batting_HR)*log(abs(Team_Batting_HR)+1);
+	Log10_homerunbat=sign(Team_Batting_HR)*log10(abs(Team_Batting_HR)+1);
+	ln_Ibatterso=sign(IMP_Batting_SO)*log(abs(IMP_Batting_SO)+1);
+	Log10_Ibatterso=sign(IMP_Batting_SO)*log10(abs(IMP_Batting_SO)+1);
+	ln_homerunpit=sign(Team_Pitching_HR)*log(abs(Team_Pitching_HR)+1);
+	Log10_homerunpit=sign(Team_Pitching_HR)*log10(abs(Team_Pitching_HR)+1);
+	ln_DPOE=sign(DoublePlays_Over_Errors)*log(abs(DoublePlays_Over_Errors)+1);
+	Log10_DPOE=sign(DoublePlays_Over_Errors)*log10(abs(DoublePlays_Over_Errors)+1);
+	run; quit;
+
+PROC SGPLOT data=xform;
+SCATTER X=ln_homerunbat Y=TARGET_WINS;
+Title "Log Transformation of Homeruns by Batters";
+run;quit;
+PROC SGPLOT  data=xform;
+SCATTER X=Log10_DPOE Y=TARGET_WINS;
+run;quit;
+
+
+
+*Check to make sure no records are lost or missing;
+proc means data=xform min max mean median nmiss n stddev  p1 p5 p95 p99;
+var T95_BRA T99_BRA T95_HPW T99_HPW T95_TBE T99_TBE T95_Batting_1B T99_Batting_1B T95_fielding_tfe T99_Fielding_tfe T95_pitching_ips T99_pitching_ips T95_Pitching_Pbb T99_pitching_PBB T95_Pitching_ph T99_pitching_ph T95_Batting_H T99_Batting_H T95_Batting_2B T99_Batting_2B T95_Batting_3B T99_Batting_3B T95_Batting_BB T99_Batting_BB T95_Baserun_ISB T99_Baserun_ISB T95_Baserun_ICS T99_Baserun_ICS ln_DPOE Log10_DPOE Target_Wins ln_homerunbat Log10_homerunbat ln_homerunpit Log10_homerunpit ln_Ibatterso log10_Ibatterso;
+Title 'Numerical Data PROC Means';
+run; quit;
+
+proc contents data=xform;
+run;
+
+*Model identification;
+proc reg data=xform outest=betas  plots=diagnostics(stats=(defaults aic));
+model TARGET_WINS=
+	T99_Batting_H
+	T99_Batting_2B
+	T99_Batting_3B
+	T99_Batting_BB
+	T99_Baserun_ISB
+	T99_Pitching_pbb
+	T99_fielding_tfe
+	T99_Batting_1B
+	T95_TBE
+	ln_homerunbat
+	ln_homerunpit
+	ln_DPOE
+	T99_Pitching_ph
+	T99_Baserun_ICS
+	ln_Ibatterso
+	Imp_fielding_DP
+	T99_pitching_Ips
+	M_SO
+	M_CS
+	M_SB
+	M_DP
+	M_PSO
+/vif aic adjrsq
+selection=forward slentry=0.1;
+run; quit;
+
+proc reg data=xform outest=betas1 plots=diagnostics(stats=(defaults aic));
+model TARGET_WINS=
+	T99_Batting_H
+	T99_Batting_2B
+	T99_Batting_3B
+	T99_Batting_BB
+	T99_Baserun_ISB
+	T99_Pitching_pbb
+	T99_fielding_tfe
+	T99_Batting_1B
+	T95_TBE
+	ln_homerunbat
+	ln_homerunpit
+	ln_DPOE
+	T99_Pitching_ph
+	T99_Baserun_ICS
+	ln_Ibatterso
+	Imp_fielding_DP
+	T99_pitching_Ips
+	M_SO
+	M_CS
+	M_SB
+	M_DP
+	M_PSO
+/vif aic adjrsq
+selection=adjrsq best=1;
+run; quit;
+
+proc reg data=xform outest=betas3 plots=diagnostics(stats=(defaults aic));
+model TARGET_WINS=
+	T99_Batting_H
+	T99_Batting_2B
+	T99_Batting_3B
+	T99_Batting_BB
+	T99_Baserun_ISB
+	T99_Pitching_pbb
+	T99_fielding_tfe
+	T99_Batting_1B
+	T95_TBE
+	ln_homerunbat
+	ln_homerunpit
+	ln_DPOE
+	T99_Pitching_ph
+	T99_Baserun_ICS
+	ln_Ibatterso
+	Imp_fielding_DP
+	T99_pitching_Ips
+	M_SO
+	M_CS
+	M_SB
+	M_DP
+	M_PSO
+/vif aic adjrsq
+selection=cp best=1;
+run; quit;
+
+*Betas3 selected;
+
+*Prepareing Moneyball_test data set;
+Data need_predictions;
+	set mydata.moneyball_test;
+
+	drop Team_batting_hbp;
+   IMP_baserun_cs=team_baserun_cs;
+   M_CS=0;
+   if missing (Team_baserun_cs) then do;
+   IMP_Baserun_CS=52.8;
+   M_CS=1;
+   end;
+   drop team_baserun_cs;
+
+   Imp_batting_so=team_batting_so;
+   M_SO=0;
+   if missing (team_batting_so) then do;
+   Imp_batting_so=735.6;
+   M_SO=1;
+   end;
+   drop team_batting_so;
+
+   Imp_baserun_sb=team_baserun_sb;
+   M_sb=0;
+   if missing (team_baserun_sb) then do;
+   Imp_baserun_sb=124.7;
+   M_sb=1;
+   end;
+   drop team_baserun_sb;
+
+   Imp_fielding_DP=team_fielding_dp;
+   M_DP=0;
+   if missing (team_fielding_dp) then do;
+   Imp_fielding_dp=146.4;
+   M_DP=1;
+   end;
+   drop team_fielding_dp;
+
+   Imp_pitching_so=team_pitching_so;
+   M_PSO=0;
+   if missing (team_pitching_so) then do;
+   Imp_pitching_so=817.7;
+   M_PSO=1;
+   end;
+   drop team_pitching_so;
+
+data need_predictions1;
+   set need_predictions;
+  TEAM_BATTING_1B = TEAM_BATTING_H - TEAM_BATTING_HR - TEAM_BATTING_2B - TEAM_BATTING_3B;
+   Total_Bases_Earned= 4*Team_Batting_HR+3*Team_Batting_3B+2*Team_Batting_2B+TEAM_Batting_1B+Team_Batting_BB+Imp_baserun_sb-IMP_baserun_cs;
+	HitplusWalkRatio=(Team_Batting_H+Team_Batting_BB)/(Team_pitching_H+Team_pitching_BB);
+	Base_Runners_Allowed=Team_Pitching_BB+Team_Pitching_H;
+	DoublePlays_Over_Errors=Imp_fielding_DP/Team_fielding_E;
+run;
+
+   proc means data=need_predictions1 noprint;
+	output out =MEANFILE1
+	p1(Base_Runners_Allowed HitPlusWalkRatio Total_Bases_earned Team_Batting_1B Team_fielding_E Imp_pitching_so Team_Pitching_BB Team_pitching_H Team_Batting_H Team_Batting_2B Team_Batting_3B Team_Batting_BB Imp_baserun_sb IMP_baserun_cs )=p01_BRA p01HPW p01tbe p011B p01tfe p01ips p01pbb p01ph p01h p012B p013B p01BB p01SB p01CS
+	p5(Base_Runners_Allowed HitPlusWalkRatio Total_Bases_earned Team_Batting_1B Team_fielding_E Imp_pitching_so Team_Pitching_BB Team_pitching_H Team_Batting_H Team_Batting_2B Team_Batting_3B Team_Batting_BB Imp_baserun_sb IMP_baserun_cs)=p05_BRA p05HPW p05tbe p051B p05tfe p05ips p05pbb p05ph p05h p052B p053B p05BB p05SB p05CS
+	p95(Base_Runners_Allowed HitPlusWalkRatio Total_Bases_earned Team_Batting_1B Team_fielding_E Imp_pitching_so Team_Pitching_BB Team_pitching_H Team_Batting_H Team_Batting_2B Team_Batting_3B Team_Batting_BB Imp_baserun_sb IMP_baserun_cs)=p95_BRA p95HPW p95tbe p951B p95tfe p95ips p95pbb p95ph p95h p952B p953B p95BB p95SB p95CS
+	p99(Base_Runners_Allowed HitPlusWalkRatio Total_Bases_earned Team_Batting_1B Team_fielding_E Imp_pitching_so Team_Pitching_BB Team_pitching_H Team_Batting_H Team_Batting_2B Team_Batting_3B Team_Batting_BB Imp_baserun_sb IMP_baserun_cs)=p99_BRA p99HPW p99tbe p991B p99tfe p99ips p99pbb p99ph p99h p992B p993B p99BB p99SB p99CS;
+run;
+
+proc print data=MEANFILE1;
+run;
+data;
+set MEANFILE1;
+call symput("P01h",P01h);
+call symput("P05h",P05h);
+call symput("p95h",P95h);
+call symput("p99h",P99h);
+call symput("P012B",P012B);
+call symput("P052B",P052B);
+call symput("p952B",P952B);
+call symput("p992B",P992B);
+call symput("P013B",P013B);
+call symput("P053B",P053B);
+call symput("p953B",P953B);
+call symput("p993B",P993B);
+call symput("P01BB",P01BB);
+call symput("P05BB",P05BB);
+call symput("p95BB",P95BB);
+call symput("p99BB",P99BB);
+call symput("P01SB",P01SB);
+call symput("P05SB",P05SB);
+call symput("p95SB",P95SB);
+call symput("p99SB",P99SB);
+call symput("P01CS",P01CS);
+call symput("P05CS",P05CS);
+call symput("p95CS",P95CS);
+call symput("p99CS",P99CS);
+call symput("P01ph",P01ph);
+call symput("P05ph",P05ph);
+call symput("p95ph",P95ph);
+call symput("p99ph",P99ph);
+call symput("P01pbb",P01pbb);
+call symput("P05pbb",P05pbb);
+call symput("p95pbb",P95pbb);
+call symput("p99pbb",P99pbb);
+call symput("P01ips",P01ips);
+call symput("P05ips",P05ips);
+call symput("p95ips",P95ips);
+call symput("p99ips",P99ips);
+call symput("P01tfe",P01tfe);
+call symput("P05tfe",P05tfe);
+call symput("p95tfe",P95tfe);
+call symput("p99tfe",P99tfe);
+call symput("P011B",P011B);
+call symput("P051B",P051B);
+call symput("p951B",P951B);
+call symput("p991B",P991B);
+call symput("P01tbe",P01tbe);
+call symput("P05tbe",P05tbe);
+call symput("p95tbe",P95tbe);
+call symput("p99tbe",P99tbe);
+call symput("P01hpw",P01hpw);
+call symput("P05hpw",P05hpw);
+call symput("p95hpw",P95hpw);
+call symput("p99hpw",P99hpw);
+call symput("P01BRA",P01BRA);
+call symput("P05BRA",P05BRA);
+call symput("p95BRA",P95BRA);
+call symput("p99BRA",P99BRA);
+run;
+
+
+data need_predictions2;
+set need_predictions1;
+T95_Batting_H	=max(min(Team_Batting_H,&P95h.),&p05h.);
+T99_Batting_H	=max(min(Team_Batting_H,&P99h.),&p01h.);
+T95_Batting_2B	=max(min(Team_Batting_2B,&P952B.),&p052B.);
+T99_Batting_2B	=max(min(Team_Batting_2B,&P992B.),&p012B.);
+T95_Batting_3B	=max(min(Team_Batting_3B,&P953B.),&p053B.);
+T99_Batting_3B	=max(min(Team_Batting_3B,&P993B.),&p013B.);
+T95_Batting_BB	=max(min(Team_Batting_BB,&P95BB.),&p05BB.);
+T99_Batting_BB	=max(min(Team_Batting_BB,&P99BB.),&p01BB.);
+T95_Baserun_ISB	=max(min(Imp_Baserun_SB,&P95SB.),&p05SB.);
+T99_Baserun_ISB	=max(min(Imp_Baserun_SB,&P99SB.),&p01SB.);
+T95_Baserun_ICS	=max(min(Imp_Baserun_CS,&P95CS.),&p05CS.);
+T99_Baserun_ICS	=max(min(Imp_Baserun_CS,&P99CS.),&p01CS.);
+T95_Pitching_ph	=max(min(Team_pitching_H,&P95ph.),&p05ph.);
+T99_Pitching_ph=max(min(Team_pitching_H,&P99PH.),&p01ph.);
+T95_Pitching_pbb =max(min(Team_pitching_bb,&P95pbb.),&p05pbb.);
+T99_Pitching_pbb=max(min(Team_pitching_bb,&P99Pbb.),&p01pbb.);
+T95_Pitching_ips =max(min(IMP_pitching_so,&P95ips.),&p05ips.);
+T99_Pitching_ips =max(min(IMP_pitching_so,&P99ips.),&p01ips.);
+T95_Fielding_tfe =max(min(Team_fielding_e,&P95tfe.),&p05tfe.);
+T99_Fielding_tfe =max(min(Team_fielding_e,&P99tfe.),&p01tfe.);
+T95_Batting_1B =max(min(Team_Batting_1B,&P951B.),&p051B.);
+T99_Batting_1B =max(min(Team_Batting_1B,&P991B.),&p011B.);
+T95_TBE =max(min(Total_Bases_Earned,&P95tbe.),&p05tbe.);
+T99_TBE =max(min(Total_Bases_Earned,&P99tbe.),&p01tbe.);
+T95_HPW =max(min(HitPlusWalkRatio,&P95HPW.),&p05HPW.);
+T99_HPW =max(min(HitPlusWalkRatio,&P99HPW.),&p01HPW.);
+T95_BRA =max(min(Base_Runners_Allowed,&P95BRA.),&p05BRA.);
+T99_BRA =max(min(Base_Runners_Allowed,&P99BRA.),&p01BRA.);
+run;
+
+data need_predictions2;
+	set need_predictions2;
+ln_homerunbat=sign(Team_Batting_HR)*log(abs(Team_Batting_HR)+1);
+	Log10_homerunbat=sign(Team_Batting_HR)*log10(abs(Team_Batting_HR)+1);
+	ln_Ibatterso=sign(IMP_Batting_SO)*log(abs(IMP_Batting_SO)+1);
+	Log10_Ibatterso=sign(IMP_Batting_SO)*log10(abs(IMP_Batting_SO)+1);
+	ln_homerunpit=sign(Team_Pitching_HR)*log(abs(Team_Pitching_HR)+1);
+	Log10_homerunpit=sign(Team_Pitching_HR)*log10(abs(Team_Pitching_HR)+1);
+	ln_DPOE=sign(DoublePlays_Over_Errors)*log(abs(DoublePlays_Over_Errors)+1);
+	Log10_DPOE=sign(DoublePlays_Over_Errors)*log10(abs(DoublePlays_Over_Errors)+1);
+run; quit;
+
+*Scoring my model;
+proc score data=need_predictions2  score=betas out=predictions type=parms;
+var T99_Batting_H T99_Batting_3B T99_Batting_BB T99_Baserun_ISB T99_Pitching_pbb T99_fielding_tfe T99_Batting_1B T95_TBE ln_homerunpit ln_DPOE T99_pitching_ph IMP_fielding_DP T99_Pitching_ips M_SO M_CS M_SB M_DP;
+run;
+
+Data mydata.forward1;
+	set predictions;
+	P_Target_Wins=model1;
+	if p_target_wins = '.' then p_target_wins=81;
+   P_TARGET_WINS = round(P_TARGET_WINS,1);
+   P_TARGET_WINS = min( P_TARGET_WINS, 162 );
+   P_TARGET_WINS = max( P_TARGET_WINS, 0 );
+keep index p_target_wins;
+   run; quit;
+
+data  mydata.forward2;
+	set need_predictions2;
+P_TARGET_WINS=(1.02952)-(T99_Batting_H*0.02612)+(T99_Batting_3B*0.13176)+(T99_Batting_BB*.02930)+(T99_Baserun_ISB*.04107)-(T99_Pitching_pbb*.01513)-(T99_fielding_tfe*.05661)+(T99_Batting_1B*.04986)+(T95_TBE*.01743)+(ln_homerunpit*3.99118)+(ln_DPOE*19.19941)+(T99_Pitching_ph*.00660)-(IMP_fielding_DP*.16388)-(T99_Pitching_ips*.00984)+(M_SO*9.65821)+(M_CS*1.98129)+(M_sb*35.10369)+(M_DP*6.30185);
+TARGET_WINS = round(P_TARGET_WINS,1);
+P_TARGET_WINS = min( P_TARGET_WINS, 162 );
+P_TARGET_WINS = max( P_TARGET_WINS, 0 );
+keep INDEX P_TARGET_WINS;
+run; Quit;
+
+proc print data=mydata.forward1(obs=10);
+run;
+proc print data=mydata.forward2(obs=10);
+run; quit;
